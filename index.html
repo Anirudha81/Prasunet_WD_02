@@ -1,0 +1,176 @@
+<!-- 
+
+Welcome to GDB Online.
+GDB online is an online compiler and debugger tool for C, C++, Python, Java, PHP, Ruby, Perl,
+C#, OCaml, VB, Swift, Pascal, Fortran, Haskell, Objective-C, Assembly, HTML, CSS, JS, SQLite, Prolog.
+Code, Compile, Run and Debug online from anywhere in world.
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stopwatch</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    .stopwatch {
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      font-size: 16px;
+      color: white;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.1s ease-in-out;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    #start {
+      background-color: green;
+    }
+
+    #pause {
+      background-color: red;
+    }
+
+    #reset {
+      background-color: skyblue;
+    }
+
+    #lap {
+      background-color: orange;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      font-size: 18px;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="stopwatch">
+    <h1 id="display">00:00:00</h1>
+
+    <div class="controls">
+      <button id="start">Start</button>
+      <button id="pause">Pause</button>
+      <button id="reset">Reset</button>
+      <button id="lap">Lap</button>
+    </div>
+
+    <ul id="laps"></ul>
+  </div>
+
+  <script>
+    let startTime = 0;
+    let elapsedTime = 0;
+    let timerInterval;
+    let isRunning = false;
+
+    // Function to format time in HH:MM:SS
+    function timeToString(time) {
+      let diffInHrs = Math.floor(time / 3600000);
+      let diffInMin = Math.floor((time % 3600000) / 60000);
+      let diffInSec = Math.floor((time % 60000) / 1000);
+      
+      let formattedHrs = diffInHrs.toString().padStart(2, "0");
+      let formattedMin = diffInMin.toString().padStart(2, "0");
+      let formattedSec = diffInSec.toString().padStart(2, "0");
+
+      return `${formattedHrs}:${formattedMin}:${formattedSec}`;
+    }
+
+    // Start the stopwatch
+    function start() {
+      if (!isRunning) {
+        startTime = Date.now() - elapsedTime;
+        timerInterval = setInterval(() => {
+          elapsedTime = Date.now() - startTime;
+          document.getElementById("display").innerText = timeToString(elapsedTime);
+        }, 1000);
+        isRunning = true;
+      }
+    }
+
+    // Pause the stopwatch
+    function pause() {
+      clearInterval(timerInterval);
+      isRunning = false;
+    }
+
+    // Reset the stopwatch
+    function reset() {
+      clearInterval(timerInterval);
+      document.getElementById("display").innerText = "00:00:00";
+      elapsedTime = 0;
+      document.getElementById("laps").innerHTML = "";
+      isRunning = false;
+    }
+
+    // Generate random color for each lap
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    // Add a lap with a random background color
+    function lap() {
+      if (isRunning) {
+        let lapTime = timeToString(elapsedTime);
+        let lapElement = document.createElement("li");
+        lapElement.innerText = lapTime;
+        lapElement.style.backgroundColor = getRandomColor();
+        document.getElementById("laps").appendChild(lapElement);
+      }
+    }
+
+    // Event listeners for button clicks
+    document.getElementById("start").addEventListener("click", start);
+    document.getElementById("pause").addEventListener("click", pause);
+    document.getElementById("reset").addEventListener("click", reset);
+    document.getElementById("lap").addEventListener("click", lap);
+  </script>
+</body>
+</html>
